@@ -19,12 +19,12 @@ require("packer").startup(function(use)
 	use { "wbthomason/packer.nvim" }
 	use { "ellisonleao/gruvbox.nvim" }
 	use {"ur4ltz/surround.nvim"}
-	--use('nvim-treesitter/nvim-treesitter', {run = ':TSUpdate'})
+	use('nvim-treesitter/nvim-treesitter', {run = ':TSUpdate'})
 
-	use {
-	  'nvim-treesitter/nvim-treesitter',
-	  commit = '8012b55eee65eba1d1ee4df0a186d30e72dcbe65',
-	}
+	-- use {
+	--   'nvim-treesitter/nvim-treesitter',
+	-- --  commit = '8012b55eee65eba1d1ee4df0a186d30e72dcbe65',
+	-- }
 	use {
 		'nvim-telescope/telescope.nvim', tag = '0.1.5',
 		 requires = { {'nvim-lua/plenary.nvim'} }
@@ -38,8 +38,9 @@ require("packer").startup(function(use)
 		'VonHeikemen/lsp-zero.nvim',
   		branch = 'v3.x',
   		requires = {
-			{'neovim/nvim-lspconfig', commit = 'b94a4c2ff309e232cfacdf8fc7658bd93919a770'},             -- Required
+			{'neovim/nvim-lspconfig', commit = '5e54173da4e0ffd8e9559c0a1fddfb3b7df97bec'},             -- Required
 			{'nvim-lua/completion-nvim'},
+		--	{'mrcjkb/rustaceanvim'},
 			{'simrat39/rust-tools.nvim'},
 			{'williamboman/mason.nvim'},           -- Optional
 			{'williamboman/mason-lspconfig.nvim'}, -- Optional
@@ -114,9 +115,10 @@ require("packer").startup(function(use)
 
 	use {'christoomey/vim-tmux-navigator', lazy = false,}
 	use { "rcarriga/nvim-dap-ui", requires = {"mfussenegger/nvim-dap", "nvim-neotest/nvim-nio"} }
-	use {'ray-x/go.nvim', commit = '591a0b837420f27c734600fa5c6de87f18352e50'}
-	use 'ray-x/guihua.lua' -- recommended if need floating window support
-
+	use {'ray-x/go.nvim', commit = '591a0b837420f27c734600fa5c6de87f18352e50', 
+		requires = {
+			'ray-x/guihua.lua' -- recommended if need floating window support
+	}}
 	-- use {
 	--   "olexsmir/gopher.nvim",
 	--   requires = { -- dependencies
@@ -239,7 +241,7 @@ require('go').setup({
     posititon = 'auto', -- one of {`top`, `bottom`, `left`, `right`, `center`, `auto`}
     width = 0.45, -- width of float window if not auto
     height = 0.98, -- height of float window if not auto
-    title_colors = 'nord', -- default to nord, one of {'nord', 'tokyo', 'dracula', 'rainbow', 'solarized ', 'monokai'}
+    title_colors = 'gruvbox', -- default to nord, one of {'nord', 'tokyo', 'dracula', 'rainbow', 'solarized ', 'monokai'}
                               -- can also set to a list of colors to define colors to choose from
                               -- e.g {'#D8DEE9', '#5E81AC', '#88C0D0', '#EBCB8B', '#A3BE8C', '#B48EAD'}
   },
@@ -650,12 +652,12 @@ vim.keymap.set('n', '<leader>sg', require('telescope.builtin').live_grep, { desc
 vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
 
 -- TREESITTER
---require'nvim-treesitter.configs'.setup {
---	ensure_installed = {"c", "lua", "vim", "go", "javascript", "typescript", "rust","html", "prisma"},
---	highlight = {
---		enable = true,
---	}
---}
+require'nvim-treesitter.configs'.setup {
+	ensure_installed = {"c", "lua", "vim", "go", "javascript", "typescript", "rust","html", "prisma"},
+	highlight = {
+		enable = true,
+	}
+}
 
 -- GRUVBOX
 require("gruvbox").setup({
@@ -693,10 +695,10 @@ lsp.preset("recommended")
 lsp.setup_servers({
 	"gopls",
 	"eslint",
-	"rust_analyzer",
-	"tsserver",
-	"html",
-	"cssls",
+--	"rust_analyzer",
+--  "tsserver",
+--  "html",
+--  "cssls",
 	"pylsp",
 	"emmet_language_server",
 	"eslint",
@@ -738,19 +740,19 @@ nvim_lsp.eslint.setup({
   },
 }) 
 ------- solidity  
-nvim_lsp.solidity.setup({
-  -- on_attach = on_attach, -- probably you will need this.
-  -- capabilities = capabilities,
-  settings = {
-    -- example of global remapping
-    solidity = {
-        includePath = '',
-        remapping = { ["@OpenZeppelin/"] = 'OpenZeppelin/openzeppelin-contracts@4.6.0/' },
-        -- Array of paths to pass as --allow-paths to solc
-        allowPaths = {}
-    }
-  },
-})
+-- nvim_lsp.solidity.setup({
+--   -- on_attach = on_attach, -- probably you will need this.
+--   -- capabilities = capabilities,
+--   settings = {
+--     -- example of global remapping
+--     solidity = {
+--         includePath = '',
+--         remapping = { ["@OpenZeppelin/"] = 'OpenZeppelin/openzeppelin-contracts@4.6.0/' },
+--         -- Array of paths to pass as --allow-paths to solc
+--         allowPaths = {}
+--     }
+--   },
+-- })
 
 
 ----- rust
@@ -807,20 +809,223 @@ vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
 	}
 )
 
- --rust config
- local rt = require("rust-tools")
+local opts = {
+  tools = { -- rust-tools options
 
- rt.setup({
-   server = {
-     on_attach = function(_, bufnr)
-       -- Hover actions
-       vim.keymap.set("n", "<C-space>", rt.hover_actions.hover_actions, { buffer = bufnr })
-       -- Code action groups
-       vim.keymap.set("n", "<Leader>a", rt.code_action_group.code_action_group, { buffer = bufnr })
-     end,
-   },
- })
+    -- how to execute terminal commands
+    -- options right now: termopen / quickfix / toggleterm / vimux
+    executor = require("rust-tools.executors").termopen,
 
+    -- callback to execute once rust-analyzer is done initializing the workspace
+    -- The callback receives one parameter indicating the `health` of the server: "ok" | "warning" | "error"
+    on_initialized = nil,
+
+    -- automatically call RustReloadWorkspace when writing to a Cargo.toml file.
+    reload_workspace_from_cargo_toml = true,
+
+    -- These apply to the default RustSetInlayHints command
+    inlay_hints = {
+      -- automatically set inlay hints (type hints)
+      -- default: true
+      auto = true,
+
+      -- Only show inlay hints for the current line
+      only_current_line = false,
+
+      -- whether to show parameter hints with the inlay hints or not
+      -- default: true
+      show_parameter_hints = true,
+
+      -- prefix for parameter hints
+      -- default: "<-"
+      parameter_hints_prefix = "<- ",
+
+      -- prefix for all the other hints (type, chaining)
+      -- default: "=>"
+      other_hints_prefix = "=> ",
+
+      -- whether to align to the length of the longest line in the file
+      max_len_align = false,
+
+      -- padding from the left if max_len_align is true
+      max_len_align_padding = 1,
+
+      -- whether to align to the extreme right or not
+      right_align = false,
+
+      -- padding from the right if right_align is true
+      right_align_padding = 7,
+
+      -- The color of the hints
+      highlight = "Comment",
+    },
+
+    -- options same as lsp hover / vim.lsp.util.open_floating_preview()
+    hover_actions = {
+
+      -- the border that is used for the hover window
+      -- see vim.api.nvim_open_win()
+      border = {
+        { "╭", "FloatBorder" },
+        { "─", "FloatBorder" },
+        { "╮", "FloatBorder" },
+        { "│", "FloatBorder" },
+        { "╯", "FloatBorder" },
+        { "─", "FloatBorder" },
+        { "╰", "FloatBorder" },
+        { "│", "FloatBorder" },
+      },
+
+      -- Maximal width of the hover window. Nil means no max.
+      max_width = nil,
+
+      -- Maximal height of the hover window. Nil means no max.
+      max_height = nil,
+
+      -- whether the hover action window gets automatically focused
+      -- default: false
+      auto_focus = false,
+    },
+
+    -- settings for showing the crate graph based on graphviz and the dot
+    -- command
+    crate_graph = {
+      -- Backend used for displaying the graph
+      -- see: https://graphviz.org/docs/outputs/
+      -- default: x11
+      backend = "x11",
+      -- where to store the output, nil for no output stored (relative
+      -- path from pwd)
+      -- default: nil
+      output = nil,
+      -- true for all crates.io and external crates, false only the local
+      -- crates
+      -- default: true
+      full = true,
+
+      -- List of backends found on: https://graphviz.org/docs/outputs/
+      -- Is used for input validation and autocompletion
+      -- Last updated: 2021-08-26
+      enabled_graphviz_backends = {
+        "bmp",
+        "cgimage",
+        "canon",
+        "dot",
+        "gv",
+        "xdot",
+        "xdot1.2",
+        "xdot1.4",
+        "eps",
+        "exr",
+        "fig",
+        "gd",
+        "gd2",
+        "gif",
+        "gtk",
+        "ico",
+        "cmap",
+        "ismap",
+        "imap",
+        "cmapx",
+        "imap_np",
+        "cmapx_np",
+        "jpg",
+        "jpeg",
+        "jpe",
+        "jp2",
+        "json",
+        "json0",
+        "dot_json",
+        "xdot_json",
+        "pdf",
+        "pic",
+        "pct",
+        "pict",
+        "plain",
+        "plain-ext",
+        "png",
+        "pov",
+        "ps",
+        "ps2",
+        "psd",
+        "sgi",
+        "svg",
+        "svgz",
+        "tga",
+        "tiff",
+        "tif",
+        "tk",
+        "vml",
+        "vmlz",
+        "wbmp",
+        "webp",
+        "xlib",
+        "x11",
+      },
+    },
+  },
+
+  -- all the opts to send to nvim-lspconfig
+  -- these override the defaults set by rust-tools.nvim
+  -- see https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md#rust_analyzer
+  server = {
+    -- standalone file support
+    -- setting it to false may improve startup time
+    standalone = false,
+  }, -- rust-analyzer options
+
+  -- debugging stuff
+  dap = {
+    adapter = {
+      type = "executable",
+      command = "lldb-vscode",
+      name = "rt_lldb",
+    },
+  },
+}
+
+require('rust-tools').setup(opts)
+ --rust tool config
+local rt = require("rust-tools")
+
+rt.setup({
+  server = {
+    on_attach = function(_, bufnr)
+      -- Hover actions
+      vim.keymap.set("n", "<C-space>", rt.hover_actions.hover_actions, { buffer = bufnr })
+      -- Code action groups
+      vim.keymap.set("n", "<Leader>a", rt.code_action_group.code_action_group, { buffer = bufnr })
+    end,
+  },
+})
+
+-- vim.g.rustaceanvim = {
+--    ---@type RustaceanToolsOpts
+--    tools = {
+--      -- ...
+--    },
+--    ---@type RustaceanLspClientOpts
+--    server = {
+--      on_attach = function(client, bufnr)
+--        -- Set keybindings, etc. here.
+-- 	   -- Hover actions
+--        vim.keymap.set("n", "<C-space>", rt.hover_actions.hover_actions, { buffer = bufnr })
+--        --Code action groups
+--        vim.keymap.set("n", "<Leader>a", rt.code_action_group.code_action_group, { buffer = bufnr })
+--
+--      end,
+--      default_settings = {
+--        -- rust-analyzer language server configuration
+--        ['rust-analyzer'] = {
+--        },
+--      },
+--      -- ...
+--    },
+--    ---@type RustaceanDapOpts
+--    dap = {
+--      -- ...
+--    },
+--  }
 -- COMMENT
 require("nvim_comment").setup({
 	operator_mapping = "<leader>/"
