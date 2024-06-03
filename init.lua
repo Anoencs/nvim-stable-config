@@ -38,7 +38,8 @@ require("packer").startup(function(use)
 		'VonHeikemen/lsp-zero.nvim',
   		branch = 'v3.x',
   		requires = {
-			{'neovim/nvim-lspconfig', commit = '5e54173da4e0ffd8e9559c0a1fddfb3b7df97bec'},             -- Required
+		--	{'neovim/nvim-lspconfig', commit = '5e54173da4e0ffd8e9559c0a1fddfb3b7df97bec'},             -- Required
+			{'neovim/nvim-lspconfig'},             -- Required
 			{'nvim-lua/completion-nvim'},
 		--	{'mrcjkb/rustaceanvim'},
 			{'simrat39/rust-tools.nvim'},
@@ -59,21 +60,21 @@ require("packer").startup(function(use)
 	use {"akinsho/toggleterm.nvim", tag = '*' }
 	use "terrortylor/nvim-comment"
 	use "CreaturePhil/vim-handmade-hero"
-	use({
-      "hrsh7th/nvim-cmp",
-      requires = {
-        { "hrsh7th/cmp-nvim-lsp" },
-        { "hrsh7th/cmp-nvim-lua" },
-        { "hrsh7th/cmp-buffer" },
-        { "hrsh7th/cmp-path" },
-        { "hrsh7th/cmp-cmdline" },
-        { "hrsh7th/vim-vsnip" },
-        { "hrsh7th/cmp-vsnip" },
-		{'Thomashighbaugh/nvim-forge'},
-        { "hrsh7th/vim-vsnip-integ" },
-        { "f3fora/cmp-spell", { "hrsh7th/cmp-calc" }, { "hrsh7th/cmp-emoji" } },
-      },
-    })
+	-- use({
+	--       "hrsh7th/nvim-cmp",
+	--       requires = {
+	--         { "hrsh7th/cmp-nvim-lsp" },
+	--         { "hrsh7th/cmp-nvim-lua" },
+	--         { "hrsh7th/cmp-buffer" },
+	--         { "hrsh7th/cmp-path" },
+	--         { "hrsh7th/cmp-cmdline" },
+	--         { "hrsh7th/vim-vsnip" },
+	--         { "hrsh7th/cmp-vsnip" },
+	-- 	{'Thomashighbaugh/nvim-forge'},
+	--         { "hrsh7th/vim-vsnip-integ" },
+	--         { "f3fora/cmp-spell", { "hrsh7th/cmp-calc" }, { "hrsh7th/cmp-emoji" } },
+	--       },
+	--     })
     use {
         'akinsho/git-conflict.nvim',
         tag = "*",
@@ -105,6 +106,7 @@ require("packer").startup(function(use)
           require("copilot_cmp").setup()
       end,
   }
+  use "CopilotC-Nvim/CopilotChat.nvim"
 
 	use {
 	  'nvim-tree/nvim-tree.lua',
@@ -620,6 +622,7 @@ require("nvim-tree").setup { -- BEGIN_DEFAULT_OPTS
 -- some
 --vim.keymap.set("n", "<M-b>", ":Ex<CR>")
 vim.keymap.set("n", "<M-b>", ":NvimTreeToggle<CR>")
+vim.keymap.set("n", "<leader>w", ":NvimTreeFindFile<CR>")
 vim.keymap.set("n", "<leader>ge", ":GoIfErr<CR>")
 
 -- split screen and navigation
@@ -639,7 +642,7 @@ vim.keymap.set('n', '<leader>f', function()
     })
 end, { desc = '[/] Fuzzily search in current buffer' })
 
-vim.keymap.set('i', '<M-c>', 'copilot#Accept("\\<CR>")', {
+vim.keymap.set('i', '<leader>b', 'copilot#Accept("\\<CR>")', {
   expr = true,
   replace_keycodes = false
 })
@@ -1035,9 +1038,10 @@ require("nvim_comment").setup({
 require("toggleterm").setup{
 	direction = "horizontal",
 	size = 15,
-	open_mapping = [[<M-j>]]
+	open_mapping = [[<M-t>]]
 }
 
+----vim.keymap.set("n", "<leader>t", ":ToggleTerm<CR>")
 -- COLORSCHEME
 vim.cmd("colorscheme gruvbox")
 -- Adding the same comment color in each theme
