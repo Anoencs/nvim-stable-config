@@ -117,7 +117,12 @@ require("packer").startup(function(use)
 
 	use {'christoomey/vim-tmux-navigator', lazy = false,}
 	use { "rcarriga/nvim-dap-ui", requires = {"mfussenegger/nvim-dap", "nvim-neotest/nvim-nio"} }
-	use {'ray-x/go.nvim', commit = '591a0b837420f27c734600fa5c6de87f18352e50', 
+	-- use {'ray-x/go.nvim', commit = '591a0b837420f27c734600fa5c6de87f18352e50', 
+	-- 	requires = {
+	-- 		'ray-x/guihua.lua' -- recommended if need floating window support
+	-- }}
+
+	use {'ray-x/go.nvim', 
 		requires = {
 			'ray-x/guihua.lua' -- recommended if need floating window support
 	}}
@@ -642,7 +647,7 @@ vim.keymap.set('n', '<leader>f', function()
     })
 end, { desc = '[/] Fuzzily search in current buffer' })
 
-vim.keymap.set('i', '<leader>b', 'copilot#Accept("\\<CR>")', {
+vim.keymap.set('i', '<M-m>', 'copilot#Accept("\\<CR>")', {
   expr = true,
   replace_keycodes = false
 })
@@ -1035,10 +1040,18 @@ require("nvim_comment").setup({
 })
 
 -- TERMINAL SETUP
+function _G.set_terminal_keymaps()
+  local opts = { noremap = true }
+  vim.api.nvim_buf_set_keymap(0, 't', '<esc>', [[<C-\><C-n>]], opts)
+  vim.api.nvim_buf_set_keymap(0, "t", "jk", [[<C-\><C-n>]], opts)
+end
+
+vim.cmd "autocmd! TermOpen term://* lua set_terminal_keymaps()"
+
 require("toggleterm").setup{
 	direction = "horizontal",
 	size = 15,
-	open_mapping = [[<M-t>]]
+	open_mapping = [[<leader>jk]]
 }
 
 ----vim.keymap.set("n", "<leader>t", ":ToggleTerm<CR>")
