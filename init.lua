@@ -14,6 +14,11 @@ vim.opt.encoding = "utf-8"
 -- Set the packpath to include the packer.nvim directory
 print("Welcome Anoencs! How are you doing today?")
 vim.g.mapleader = " "
+vim.cmd [[
+  highlight MyIncoming guifg=#282828 guibg=#fabd2f
+  highlight MyCurrent guifg=#282828 guibg=#83a598
+]]
+
 
 require("packer").startup(function(use)
 	use { "wbthomason/packer.nvim" }
@@ -34,6 +39,7 @@ require("packer").startup(function(use)
 	   requires = { 'kyazdani42/nvim-web-devicons', opt = true }
 	}
 	use { "fatih/vim-go" }
+	use { "modocache/move.vim"}
 	use {
 		'VonHeikemen/lsp-zero.nvim',
   		branch = 'v3.x',
@@ -53,13 +59,26 @@ require("packer").startup(function(use)
 			{'hrsh7th/cmp-path'},         -- Optional
 			{'saadparwaiz1/cmp_luasnip'}, -- Optional
 			{'hrsh7th/cmp-nvim-lua'},     -- Optional
-			{'L3MON4D3/LuaSnip'},             -- Required
+			{
+				"L3MON4D3/LuaSnip",
+				-- follow latest release.
+				tag = "v2.*", -- Replace <CurrentMajor> by the latest released major (first number of latest release)
+				-- install jsregexp (optional!:).
+				run = "make install_jsregexp"
+			},
 			{'rafamadriz/friendly-snippets'}, -- Optional
 		}
+	}
+	use {
+	  'hrsh7th/vim-vsnip',
+	  requires = {
+		{'hrsh7th/vim-vsnip-integ'}
+	  }
 	}
 	use {"akinsho/toggleterm.nvim", tag = '*' }
 	use "terrortylor/nvim-comment"
 	use "CreaturePhil/vim-handmade-hero"
+	use "rafamadriz/friendly-snippets"
 	-- use({
 	--       "hrsh7th/nvim-cmp",
 	--       requires = {
@@ -75,6 +94,7 @@ require("packer").startup(function(use)
 	--         { "f3fora/cmp-spell", { "hrsh7th/cmp-calc" }, { "hrsh7th/cmp-emoji" } },
 	--       },
 	--     })
+
     use {
         'akinsho/git-conflict.nvim',
         tag = "*",
@@ -85,35 +105,36 @@ require("packer").startup(function(use)
                 disable_diagnostics = false,
                 list_opener = 'copen',
                 highlights = {
-                    incoming = 'DiffAdd',
-                    current = 'DiffText',
+                    incoming = 'MyIncoming',
+                    current = 'MyCurrent',
                 }
             }
         end
     }
-	use "lervag/vimtex"
+	--use "lervag/vimtex"
 	use "mattn/emmet-vim"
--- install without yarn or npm
+	-- install without yarn or npm
+	-- markdown preview
 	use({
 		"iamcco/markdown-preview.nvim",
 		run = function() vim.fn["mkdp#util#install"]() end,
 	})
 
-	use  
-  {
-      "zbirenbaum/copilot-cmp",
-      config = function()
-          require("copilot_cmp").setup()
-      end,
-  }
-  use "CopilotC-Nvim/CopilotChat.nvim"
-
-	use {
-	  'nvim-tree/nvim-tree.lua',
-	  requires = {
-		'nvim-tree/nvim-web-devicons', -- optional
-	  },
-	}
+	 use  
+	   {
+	       "zbirenbaum/copilot-cmp",
+	       config = function()
+	           require("copilot_cmp").setup()
+	       end,
+	   }
+	   use "CopilotC-Nvim/CopilotChat.nvim"
+	
+	 use {
+	   'nvim-tree/nvim-tree.lua',
+	   requires = {
+	 	'nvim-tree/nvim-web-devicons', -- optional
+	   },
+	 }
 
 	use {'christoomey/vim-tmux-navigator', lazy = false,}
 	use { "rcarriga/nvim-dap-ui", requires = {"mfussenegger/nvim-dap", "nvim-neotest/nvim-nio"} }
@@ -126,6 +147,13 @@ require("packer").startup(function(use)
 		requires = {
 			'ray-x/guihua.lua' -- recommended if need floating window support
 	}}
+	use {
+		'lewis6991/gitsigns.nvim'
+	}
+
+	use {
+		'frankroeder/parrot.nvim'
+	}
 	-- use {
 	--   "olexsmir/gopher.nvim",
 	--   requires = { -- dependencies
@@ -133,8 +161,432 @@ require("packer").startup(function(use)
 	-- 	"nvim-treesitter/nvim-treesitter",
 	--   },
 	-- }
-
+	--  Github issue
+	--lsp-diagnos
+-- use {
+--     'folke/trouble.nvim',
+--     cmd = 'Trouble',
+--     config = function()
+--       require('trouble').setup {} -- for default options, refer to the configuration section for custom setup.
+--     end,
+--   }
 end)
+---=====================================================================================================================================================================================================
+---                                                   																																			    ----
+---                                                   																																			    ----
+---                                                   								 RUSTACEANVIM																					    ----  
+---                                                   																																			    ----
+---                                                   																																			    ----
+---=====================================================================================================================================================================================================
+-- vim.g.rustaceanvim = {
+--   -- Plugin configuration
+--   tools = {
+--   },
+--   -- LSP configuration
+--   server = {
+--     on_attach = function(client, bufnr)
+--       -- you can also put keymaps in here
+--     end,
+--     default_settings = {
+--       -- rust-analyzer language server configuration
+--       ['rust-analyzer'] = {
+--       },
+--     },
+--   },
+--   -- DAP configuration
+--   dap = {
+--   },
+-- }
+---=====================================================================================================================================================================================================
+---                                                   																																			    ----
+---                                                   																																			    ----
+---                                                   								MARKDOWN PREVIEW CONFIG 																					    ----  
+---                                                   																																			    ----
+---                                                   																																			    ----
+---=====================================================================================================================================================================================================
+-- set to 1, nvim will open the preview window after entering the Markdown buffer
+-- default: 0
+vim.g.mkdp_auto_start = 0
+
+-- set to 1, nvim will auto close current preview window when changing
+-- from Markdown buffer to another buffer
+-- default: 1
+vim.g.mkdp_auto_close = 1
+
+-- set to 1, Vim will refresh Markdown when saving the buffer or
+-- when leaving insert mode. Default 0 is auto-refresh Markdown as you edit or
+-- move the cursor
+-- default: 0
+vim.g.mkdp_refresh_slow = 0
+
+-- set to 1, the MarkdownPreview command can be used for all files,
+-- by default it can be used in Markdown files only
+-- default: 0
+vim.g.mkdp_command_for_global = 0
+
+-- set to 1, the preview server is available to others in your network.
+-- By default, the server listens on localhost (127.0.0.1)
+-- default: 0
+vim.g.mkdp_open_to_the_world = 0
+
+-- use custom IP to open preview page.
+-- Useful when you work in remote Vim and preview on local browser.
+-- For more details see: https://github.com/iamcco/markdown-preview.nvim/pull/9
+-- default empty
+vim.g.mkdp_open_ip = ''
+
+-- specify browser to open preview page
+-- for path with space
+-- valid: `/path/with\ space/xxx`
+-- invalid: `/path/with\\ space/xxx`
+-- default: ''
+vim.g.mkdp_browser = ''
+
+-- set to 1, echo preview page URL in command line when opening preview page
+-- default is 0
+vim.g.mkdp_echo_preview_url = 0
+
+-- a custom Vim function name to open preview page
+-- this function will receive URL as param
+-- default is empty
+vim.g.mkdp_browserfunc = ''
+
+-- options for Markdown rendering
+-- mkit: markdown-it options for rendering
+-- katex: KaTeX options for math
+-- uml: markdown-it-plantuml options
+-- maid: mermaid options
+-- disable_sync_scroll: whether to disable sync scroll, default 0
+-- sync_scroll_type: 'middle', 'top' or 'relative', default value is 'middle'
+--   middle: means the cursor position is always at the middle of the preview page
+--   top: means the Vim top viewport always shows up at the top of the preview page
+--   relative: means the cursor position is always at relative position of the preview page
+-- hide_yaml_meta: whether to hide YAML metadata, default is 1
+-- sequence_diagrams: js-sequence-diagrams options
+-- content_editable: if enable content editable for preview page, default: v:false
+-- disable_filename: if disable filename header for preview page, default: 0
+vim.g.mkdp_preview_options = {
+    mkit = {},
+    katex = {},
+    uml = {},
+    maid = {},
+    disable_sync_scroll = 0,
+    sync_scroll_type = 'middle',
+    hide_yaml_meta = 1,
+    sequence_diagrams = {},
+    flowchart_diagrams = {},
+    content_editable = false,
+    disable_filename = 0,
+    toc = {}
+}
+
+-- use a custom Markdown style. Must be an absolute path
+-- like '/Users/username/markdown.css' or expand('~/markdown.css')
+vim.g.mkdp_markdown_css = ''
+
+-- use a custom highlight style. Must be an absolute path
+-- like '/Users/username/highlight.css' or expand('~/highlight.css')
+vim.g.mkdp_highlight_css = ''
+
+-- use a custom port to start server or empty for random
+vim.g.mkdp_port = ''
+
+-- preview page title
+-- ${name} will be replaced with the file name
+vim.g.mkdp_page_title = '?${name}?'
+
+-- use a custom location for images
+vim.g.mkdp_images_path = '/home/user/.markdown_images'
+
+-- recognized filetypes
+-- these filetypes will have MarkdownPreview... commands
+vim.g.mkdp_filetypes = {'markdown'}
+
+-- set default theme (dark or light)
+-- By default the theme is defined according to the preferences of the system
+vim.g.mkdp_theme = 'dark'
+
+-- combine preview window
+-- default: 0
+-- if enable it will reuse previous opened preview window when you preview markdown file.
+-- ensure to set vim.g.mkdp_auto_close = 0 if you have enabled this option
+vim.g.mkdp_combine_preview = 0
+
+-- auto refetch combine preview contents when change markdown buffer
+-- only when vim.g.mkdp_combine_preview is 1
+vim.g.mkdp_combine_preview_auto_refresh = 1
+
+-- Define the function to open the Markdown preview in a new Arc browser window
+function OpenMarkdownPreview(url)
+    vim.fn.system({'open', '-a', 'Arc Browser', '-n', '--args', '--new-window', url})
+end
+
+-- Set the mkdp_browserfunc to the defined function
+vim.g.mkdp_browserfunc = 'OpenMarkdownPreview'
+---=====================================================================================================================================================================================================
+---                                                   																																			    ----
+---                                                   																																			    ----
+---                                                   								 	PARROT NVIM																				    ----  
+---                                                   																																			    ----
+---                                                   																																			    ----
+---=================================================================================================================================================================================================
+local function parrot_status()
+    local status_info = require("parrot.config").get_status_info()
+    local status = ""
+    if status_info.is_chat then
+      status = status_info.prov.chat.name
+    else
+      status = status_info.prov.command.name
+    end
+    return string.format("%s(%s)", status, status_info.model)
+  end
+
+require('parrot').setup({
+    -- The provider definitions include endpoints, API keys, default parameters,
+    -- and topic model arguments for chat summarization, with an example provided for Anthropic.
+    providers = {
+      anthropic = {
+        api_key = os.getenv("ANTHROPIC_API_KEY"),
+        -- OPTIONAL: Alternative methods to retrieve API key
+        -- Using GPG for decryption:
+        -- api_key = { "gpg", "--decrypt", vim.fn.expand("$HOME") .. "/anthropic_api_key.txt.gpg" },
+        -- Using macOS Keychain:
+        -- api_key = { "/usr/bin/security", "find-generic-password", "-s anthropic-api-key", "-w" },
+        endpoint = "https://api.anthropic.com/v1/messages",
+        topic_prompt = "You only respond with 3 to 4 words to summarize the past conversation.",
+        -- usually a cheap and fast model to generate the chat topic based on
+        -- the whole chat history
+        topic = {
+          model = "claude-3-haiku-20240307",
+          params = { max_tokens = 32 },
+        },
+        -- default parameters for the actual model
+        params = {
+          chat = { max_tokens = 4096 },
+          command = { max_tokens = 4096 },
+        },
+      },
+    },
+	hooks = {
+      Ask = function(parrot, params)
+        local template = [[
+          In light of your existing knowledge base, please generate a response that
+          is succinct and directly addresses the question posed. Prioritize accuracy
+          and relevance in your answer, drawing upon the most recent information
+          available to you. Aim to deliver your response in a concise manner,
+          focusing on the essence of the inquiry.
+          Question: {{command}}
+        ]]
+        local model_obj = parrot.get_model("command")
+        parrot.logger.info("Asking model: " .. model_obj.name)
+        parrot.Prompt(params, parrot.ui.Target.popup, model_obj, "🤖 Ask ~ ", template)
+      end,
+    },
+	sections = {
+      lualine_a = { parrot_status }
+  	},
+    -- the prefix used for all commands
+    cmd_prefix = "Prt",
+
+    -- optional parameters for curl
+    curl_params = {},
+
+    -- The directory to store persisted state information like the
+    -- current provider and the selected models
+    state_dir = vim.fn.stdpath("data"):gsub("/$", "") .. "/parrot/persisted",
+
+    -- The directory to store the chats (searched with PrtChatFinder)
+    chat_dir = vim.fn.stdpath("data"):gsub("/$", "") .. "/parrot/chats",
+
+    -- Chat user prompt prefix
+    chat_user_prefix = "🗨:",
+
+    -- llm prompt prefix
+    llm_prefix = "🦜:",
+
+    -- Explicitly confirm deletion of a chat file
+    chat_confirm_delete = true,
+
+    -- When available, call API for model selection
+    online_model_selection = false,
+
+    -- Local chat buffer shortcuts
+    chat_shortcut_respond = { modes = { "n", "i", "v", "x" }, shortcut = "<C-g><C-g>" },
+    chat_shortcut_delete = { modes = { "n", "i", "v", "x" }, shortcut = "<C-g>d" },
+    chat_shortcut_stop = { modes = { "n", "i", "v", "x" }, shortcut = "<C-g>s" },
+    chat_shortcut_new = { modes = { "n", "i", "v", "x" }, shortcut = "<C-g>c" },
+
+    -- Option to move the cursor to the end of the file after finished respond
+    chat_free_cursor = false,
+
+     -- use prompt buftype for chats (:h prompt-buffer)
+    chat_prompt_buf_type = false,
+
+    -- Default target for  PrtChatToggle, PrtChatNew, PrtContext and the chats opened from the ChatFinder
+    -- values: popup / split / vsplit / tabnew
+    toggle_target = "vsplit",
+
+    -- The interactive user input appearing when can be "native" for
+    -- vim.ui.input or "buffer" to query the input within a native nvim buffer
+    -- (see video demonstrations below)
+    user_input_ui = "native",
+
+    -- Popup window layout
+    -- border: "single", "double", "rounded", "solid", "shadow", "none"
+    style_popup_border = "single",
+
+    -- margins are number of characters or lines
+    style_popup_margin_bottom = 8,
+    style_popup_margin_left = 1,
+    style_popup_margin_right = 2,
+    style_popup_margin_top = 2,
+    style_popup_max_width = 160,
+
+    -- Prompt used for interactive LLM calls like PrtRewrite where {{llm}} is
+    -- a placeholder for the llm name
+    command_prompt_prefix_template = "🤖 {{llm}} ~ ",
+
+    -- auto select command response (easier chaining of commands)
+    -- if false it also frees up the buffer cursor for further editing elsewhere
+    command_auto_select_response = true,
+
+    -- fzf_lua options for PrtModel and PrtChatFinder when plugin is installed
+    fzf_lua_opts = {
+        ["--ansi"] = true,
+        ["--sort"] = "",
+        ["--info"] = "inline",
+        ["--layout"] = "reverse",
+        ["--preview-window"] = "nohidden:right:75%",
+    },
+
+    -- Enables the query spinner animation 
+    enable_spinner = true,
+    -- Type of spinner animation to display while loading
+    -- Available options: "dots", "line", "star", "bouncing_bar", "bouncing_ball"
+    spinner_type = "star",
+})
+
+---=====================================================================================================================================================================================================
+---                                                   																																			    ----
+---                                                   																																			    ----
+---                                                   								 OCTO CONFIG																					    ----  
+---                                                   																																			    ----
+---                                                   																																			    ----
+---=====================================================================================================================================================================================================
+
+---=====================================================================================================================================================================================================
+---                                                   																																			    ----
+---                                                   																																			    ----
+---                                                   								 	GITSIGN																				    ----  
+---                                                   																																			    ----
+---                                                   																																			    ----
+--====================================================================================================================================================================================================
+
+require('gitsigns').setup({
+  signs = {
+    add          = { text = '┃' },
+    change       = { text = '┃' },
+    delete       = { text = '_' },
+    topdelete    = { text = '‾' },
+    changedelete = { text = '~' },
+    untracked    = { text = '┆' },
+  },
+  signs_staged = {
+    add          = { text = '┃' },
+    change       = { text = '┃' },
+    delete       = { text = '_' },
+    topdelete    = { text = '‾' },
+    changedelete = { text = '~' },
+    untracked    = { text = '┆' },
+  },
+  signs_staged_enable = true,
+  signcolumn = true,  -- Toggle with `:Gitsigns toggle_signs`
+  numhl      = false, -- Toggle with `:Gitsigns toggle_numhl`
+  linehl     = false, -- Toggle with `:Gitsigns toggle_linehl`
+  word_diff  = false, -- Toggle with `:Gitsigns toggle_word_diff`
+  watch_gitdir = {
+    follow_files = true
+  },
+  auto_attach = true,
+  attach_to_untracked = false,
+  current_line_blame = false, -- Toggle with `:Gitsigns toggle_current_line_blame`
+  current_line_blame_opts = {
+    virt_text = true,
+    virt_text_pos = 'eol', -- 'eol' | 'overlay' | 'right_align'
+    delay = 1000,
+    ignore_whitespace = false,
+    virt_text_priority = 100,
+    use_focus = true,
+  },
+  current_line_blame_formatter = '<author>, <author_time:%R> - <summary>',
+  sign_priority = 6,
+  update_debounce = 100,
+  status_formatter = nil, -- Use default
+  max_file_length = 40000, -- Disable if file is longer than this (in lines)
+  preview_config = {
+    -- Options passed to nvim_open_win
+    border = 'single',
+    style = 'minimal',
+    relative = 'cursor',
+    row = 0,
+    col = 1
+  },
+ on_attach = function(bufnr)
+    local gitsigns = require('gitsigns')
+
+    local function map(mode, l, r, opts)
+      opts = opts or {}
+      opts.buffer = bufnr
+      vim.keymap.set(mode, l, r, opts)
+    end
+
+    -- Navigation
+    map('n', ']c', function()
+      if vim.wo.diff then
+        vim.cmd.normal({']c', bang = true})
+      else
+        gitsigns.nav_hunk('next')
+      end
+    end)
+
+    map('n', '[c', function()
+      if vim.wo.diff then
+        vim.cmd.normal({'[c', bang = true})
+      else
+        gitsigns.nav_hunk('prev')
+      end
+    end)
+
+    -- Actions
+    map('n', '<leader>hs', gitsigns.stage_hunk)
+    map('n', '<leader>hr', gitsigns.reset_hunk)
+    map('v', '<leader>hs', function() gitsigns.stage_hunk {vim.fn.line('.'), vim.fn.line('v')} end)
+    map('v', '<leader>hr', function() gitsigns.reset_hunk {vim.fn.line('.'), vim.fn.line('v')} end)
+    map('n', '<leader>hS', gitsigns.stage_buffer)
+    map('n', '<leader>hu', gitsigns.undo_stage_hunk)
+    map('n', '<leader>hR', gitsigns.reset_buffer)
+    map('n', '<leader>hp', gitsigns.preview_hunk)
+    map('n', '<leader>hb', function() gitsigns.blame_line{full=true} end)
+    map('n', '<leader>tb', gitsigns.toggle_current_line_blame)
+    map('n', '<leader>hd', gitsigns.diffthis)
+    map('n', '<leader>hD', function() gitsigns.diffthis('~') end)
+    map('n', '<leader>td', gitsigns.toggle_deleted)
+
+    -- Text object
+    map({'o', 'x'}, 'ih', ':<C-U>Gitsigns select_hunk<CR>')
+  end
+
+})
+
+
+---=====================================================================================================================================================================================================
+---                                                   																																			    ----
+---                                                   																																			    ----
+---                                                   								 	GOPHER																				    ----  
+---                                                   																																			    ----
+---                                                   																																			    ----
+--====================================================================================================================================================================================================
+
 ---- Gopher -----
 -- require("gopher").setup {
 --   commands = {
@@ -629,6 +1081,12 @@ require("nvim-tree").setup { -- BEGIN_DEFAULT_OPTS
 vim.keymap.set("n", "<M-b>", ":NvimTreeToggle<CR>")
 vim.keymap.set("n", "<leader>w", ":NvimTreeFindFile<CR>")
 vim.keymap.set("n", "<leader>ge", ":GoIfErr<CR>")
+-- diagnostics
+-- vim.keymap.set('n', '<leader>xx', '<cmd>Trouble diagnostics toggle<cr>', { desc = 'Diagnostics (Trouble)' })
+-- vim.keymap.set('n', '<leader>xX', '<cmd>Trouble diagnostics toggle filter.buf=0<cr>', { desc = 'Buffer Diagnostics (Trouble)' })
+-- vim.keymap.set('n', '<leader>cs', '<cmd>Trouble symbols toggle focus=false<cr>', { desc = 'Symbols (Trouble)' })
+-- vim.keymap.set('n', '<leader>cl', '<cmd>Trouble lsp toggle focus=false win.position=right<cr>', { desc = 'LSP Definitions / references / ... (Trouble)' })
+-- vim.keymap.set('n', '<leader>xL', '<cmd>Trouble loclist toggle<cr>', { desc = 'Location List (Trouble)' })
 
 -- split screen and navigation
 vim.keymap.set("n", "<leader>v", ":vsplit<CR><C-w>l", { noremap = true })
@@ -648,9 +1106,9 @@ vim.keymap.set('n', '<leader>f', function()
 end, { desc = '[/] Fuzzily search in current buffer' })
 
 vim.keymap.set('i', '<M-m>', 'copilot#Accept("\\<CR>")', {
-  expr = true,
-  replace_keycodes = false
-})
+   expr = true,
+   replace_keycodes = false
+ })
 vim.g.copilot_no_tab_map = true
 vim.keymap.set('n', '<leader>p', require('telescope.builtin').find_files, { desc = '[S]earch [F]iles' })
 vim.keymap.set('n', '<M-p>', require('telescope.builtin').find_files, { desc = '[S]earch [F]iles' })
@@ -687,32 +1145,44 @@ require("lualine").setup{
 
 -- LSP
 local lsp = require("lsp-zero")
+lsp.on_attach(function(client, bufnr)
+  lsp_zero.default_keymaps({buffer = bufnr})
+end)
+
+lsp.set_sign_icons({
+  error = '✘',
+  warn = '▲',
+  hint = '⚑',
+  info = '»'
+})
+
+lsp.on_attach(function(client, bufnr)
+  lsp_zero.default_keymaps({buffer = bufnr})
+end)
+
+vim.diagnostic.config({
+  signs = false
+})
 
 lsp.preset("recommended")
--- lsp.ensure_installed({
--- 	"gopls",
--- 	"eslint",
--- 	"rust_analyzer",
--- 	"html",
--- 	"cssls",
--- 	"pylsp",
--- 	"emmet_language_server"
--- })
 
 
 lsp.setup_servers({
 	"gopls",
 	"eslint",
---	"rust_analyzer",
---  "tsserver",
+	"rust_analyzer",
+	"move_analyzer",
+ 	 "tsserver",
 --  "html",
 --  "cssls",
 	"pylsp",
+	"pylyzer",
 	"emmet_language_server",
 	"eslint",
-	--"solidity",
-	"pylsp",
---	"solidity_ls_nomicfoundation",
+	"solidity",
+	"solidity_ls_nomicfoundation",
+    "solidity_ls",
+	"golangci_lint_ls"
 })
 
 lsp.set_preferences({
@@ -723,10 +1193,129 @@ lsp.set_preferences({
 
 --- config rust analyzer
 local nvim_lsp = require("lspconfig")
+local function setup_lsp_diags()
+  vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
+    vim.lsp.diagnostic.on_publish_diagnostics,
+    {
+      virtual_text = false,
+      signs = true,
+      update_in_insert = false,
+      underline = true,
+    }
+  )
+end
 
 local on_attach = function(client)
     require'completion'.on_attach(client)
 end
+---=====================================================================================================================================================================================================
+---                                                   																																			    ----
+---                                                   																																			    ----
+---                                                   								 LINT																					    ----  
+---                                                   																																			    ----
+---                                                   																																			    ----
+---===================================================================================================================================================================================================
+local lspconfig = require('lspconfig')
+
+-- Configure golangci_lint_ls
+lspconfig.golangci_lint_ls.setup({
+  filetypes = {'go', 'gomod'},
+  root_dir = lspconfig.util.root_pattern('.git', 'go.mod'),
+  init_options = {
+    command = { 
+      "golangci-lint", 
+      "run", 
+      "--enable-all", 
+      "--disable", "lll", -- disabling line length linter
+      "--out-format", 
+      "json",
+      "--issues-exit-code=1"
+    }
+  }
+})
+-- Add this near your other global variables at the top of your config
+vim.g.go_linter_enabled = true -- Default state for the linter
+
+-- Create functions to control the linter
+local function configure_golangci_lint()
+  local lspconfig = require('lspconfig')
+  
+  if vim.g.go_linter_enabled then
+    -- Enable linter
+    lspconfig.golangci_lint_ls.setup({
+      filetypes = {'go', 'gomod'},
+      root_dir = lspconfig.util.root_pattern('.git', 'go.mod'),
+      init_options = {
+        command = { 
+          "golangci-lint", 
+          "run", 
+          "--enable-all", 
+          "--disable", "lll",
+          "--out-format", 
+          "json",
+          "--issues-exit-code=1"
+        }
+      }
+    })
+    vim.notify("GoLangCI Linter Enabled", vim.log.levels.INFO)
+  else
+    -- Disable linter by clearing diagnostics and stopping the client
+    local clients = vim.lsp.get_active_clients({name = "golangci_lint_ls"})
+    for _, client in ipairs(clients) do
+      -- Clear diagnostics
+      local ns = vim.lsp.diagnostic.get_namespace(client.id)
+      vim.diagnostic.reset(ns)
+      -- Stop the client
+      client.stop()
+    end
+    vim.notify("GoLangCI Linter Disabled", vim.log.levels.INFO)
+  end
+end
+
+-- Function to toggle linter
+local function toggle_golangci_lint()
+  vim.g.go_linter_enabled = not vim.g.go_linter_enabled
+  configure_golangci_lint()
+end
+
+-- Add keymaps for toggling and reconfiguring the linter
+vim.keymap.set('n', '<leader>lt', toggle_golangci_lint, { 
+  noremap = true, 
+  desc = "Toggle GoLangCI Linter" 
+})
+
+-- Keymap to manually run the linter (useful when linter is enabled)
+vim.keymap.set('n', '<leader>ll', function()
+  if vim.g.go_linter_enabled then
+    vim.cmd("LspRestart golangci_lint_ls")
+    vim.notify("GoLangCI Linter Manually Run", vim.log.levels.INFO)
+  else
+    vim.notify("GoLangCI Linter is disabled", vim.log.levels.WARN)
+  end
+end, { 
+  noremap = true, 
+  desc = "Run GoLangCI Linter" 
+})
+
+-- Add status function to see linter state
+local function get_linter_status()
+  return vim.g.go_linter_enabled and "Linter: ON" or "Linter: OFF"
+end
+
+-- You can add this to your lualine configuration if you want to show linter status
+-- Find your lualine setup and add this to the sections:
+require('lualine').setup({
+  sections = {
+    lualine_c = {
+      -- ... your existing components
+      { get_linter_status }
+    }
+  }
+})
+
+-- Initial setup of the linter
+configure_golangci_lint()
+
 ----- ts js
 nvim_lsp.eslint.setup({
   bin = 'eslint', -- or `eslint_d`
@@ -748,19 +1337,19 @@ nvim_lsp.eslint.setup({
   },
 }) 
 ------- solidity  
--- nvim_lsp.solidity.setup({
---   -- on_attach = on_attach, -- probably you will need this.
---   -- capabilities = capabilities,
---   settings = {
---     -- example of global remapping
---     solidity = {
---         includePath = '',
---         remapping = { ["@OpenZeppelin/"] = 'OpenZeppelin/openzeppelin-contracts@4.6.0/' },
---         -- Array of paths to pass as --allow-paths to solc
---         allowPaths = {}
---     }
---   },
--- })
+nvim_lsp.solidity.setup({
+  -- on_attach = on_attach, -- probably you will need this.
+  -- capabilities = capabilities,
+  settings = {
+    -- example of global remapping
+    solidity = {
+        includePath = '',
+        remapping = { ["@OpenZeppelin/"] = 'OpenZeppelin/openzeppelin-contracts@4.6.0/' },
+        -- Array of paths to pass as --allow-paths to solc
+        allowPaths = {}
+    }
+  },
+})
 
 
 ----- rust
@@ -1006,7 +1595,7 @@ rt.setup({
     end,
   },
 })
-
+--
 -- vim.g.rustaceanvim = {
 --    ---@type RustaceanToolsOpts
 --    tools = {
@@ -1106,7 +1695,8 @@ cmp.setup({
   -- Enable LSP snippets
   snippet = {
     expand = function(args)
-        vim.fn["vsnip#anonymous"](args.body)
+ ---       vim.fn["vsnip#anonymous"](args.body)
+ 	require('luasnip').lsp_expand(args.body)
     end,
   },
   mapping = {
@@ -1175,19 +1765,55 @@ set signcolumn=yes
 autocmd CursorHold * lua vim.diagnostic.open_float(nil, { focusable = false })
 ]])
 
-vim.api.nvim_set_keymap('n', '<c-]>', '<cmd>lua vim.lsp.buf.definition()<CR>', {silent = true})
-vim.api.nvim_set_keymap('n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', {silent = true})
-vim.api.nvim_set_keymap('n', 'gD', '<cmd>lua vim.lsp.buf.implementation()<CR>', {silent = true})
-vim.api.nvim_set_keymap('n', '<c-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', {silent = true})
-vim.api.nvim_set_keymap('n', '1gD', '<cmd>lua vim.lsp.buf.type_definition()<CR>', {silent = true})
-vim.api.nvim_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', {silent = true})
-vim.api.nvim_set_keymap('n', 'g0', '<cmd>lua vim.lsp.buf.document_symbol()<CR>', {silent = true}) 
-vim.api.nvim_set_keymap('n', 'gW', '<cmd>lua vim.lsp.buf.workspace_symbol()<CR>', {silent = true})
-vim.api.nvim_set_keymap('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', {silent = true})
+-- vim.api.nvim_set_keymap('n', '<c-]>', '<cmd>lua vim.lsp.buf.definition()<CR>', {silent = true})
+-- vim.api.nvim_set_keymap('n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', {silent = true})
+-- vim.api.nvim_set_keymap('n', 'gD', '<cmd>lua vim.lsp.buf.implementation()<CR>', {silent = true})
+-- vim.api.nvim_set_keymap('n', '<c-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', {silent = true})
+-- vim.api.nvim_set_keymap('n', '1gD', '<cmd>lua vim.lsp.buf.type_definition()<CR>', {silent = true})
+-- vim.api.nvim_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', {silent = true})
+-- vim.api.nvim_set_keymap('n', 'g0', '<cmd>lua vim.lsp.buf.document_symbol()<CR>', {silent = true}) 
+-- vim.api.nvim_set_keymap('n', 'gW', '<cmd>lua vim.lsp.buf.workspace_symbol()<CR>', {silent = true})
+-- vim.api.nvim_set_keymap('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', {silent = true})
+
+vim.api.nvim_create_autocmd('LspAttach', {
+  desc = 'LSP actions',
+  callback = function(event)
+    local opts = {buffer = event.buf}
+
+    vim.keymap.set('n', 'K', '<cmd>lua vim.lsp.buf.hover()<cr>', opts)
+    vim.keymap.set('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<cr>', opts)
+    vim.keymap.set('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<cr>', opts)
+    vim.keymap.set('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<cr>', opts)
+    vim.keymap.set('n', 'go', '<cmd>lua vim.lsp.buf.type_definition()<cr>', opts)
+    vim.keymap.set('n', 'gr', '<cmd>lua vim.lsp.buf.references()<cr>', opts)
+    vim.keymap.set('n', 'gs', '<cmd>lua vim.lsp.buf.signature_help()<cr>', opts)
+    vim.keymap.set('n', '<F2>', '<cmd>lua vim.lsp.buf.rename()<cr>', opts)
+    vim.keymap.set({'n', 'x'}, '<F3>', '<cmd>lua vim.lsp.buf.format({async = true})<cr>', opts)
+    vim.keymap.set('n', '<F4>', '<cmd>lua vim.lsp.buf.code_action()<cr>', opts)
+
+    vim.keymap.set('n', 'gl', '<cmd>lua vim.diagnostic.open_float()<cr>', opts)
+    vim.keymap.set('n', '[d', '<cmd>lua vim.diagnostic.goto_prev()<cr>', opts)
+    vim.keymap.set('n', ']d', '<cmd>lua vim.diagnostic.goto_next()<cr>', opts) 
+  end
+})
+
+
+local lsp_capabilities = require('cmp_nvim_lsp').default_capabilities()
+require("luasnip.loaders.from_vscode").load({ include = { "go" } })
+
+vim.g.completion_enable_snippet = 'vim-vsnip'
+
+
+-- require('lspconfig').tsserver.setup({capabilities = lsp_capabilities})
+-- require('lspconfig').rust_analyzer.setup({capabilities = lsp_capabilities})
+
+-- in this snippet there isn't any autocompletion setup
 
 config = function()
     require"surround".setup {mappings_style = "sandwich"}
 end
+
+
 
 require"surround".setup {
   context_offset = 100,
