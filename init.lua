@@ -14,6 +14,11 @@ vim.opt.encoding = "utf-8"
 -- Set the packpath to include the packer.nvim directory
 print("Welcome Anoencs! How are you doing today?")
 vim.g.mapleader = " "
+vim.cmd [[
+  highlight MyIncoming guifg=#282828 guibg=#fabd2f
+  highlight MyCurrent guifg=#282828 guibg=#83a598
+]]
+
 
 require("packer").startup(function(use)
 	use { "wbthomason/packer.nvim" }
@@ -34,6 +39,7 @@ require("packer").startup(function(use)
 	   requires = { 'kyazdani42/nvim-web-devicons', opt = true }
 	}
 	use { "fatih/vim-go" }
+	use { "modocache/move.vim"}
 	use {
 		'VonHeikemen/lsp-zero.nvim',
   		branch = 'v3.x',
@@ -53,13 +59,26 @@ require("packer").startup(function(use)
 			{'hrsh7th/cmp-path'},         -- Optional
 			{'saadparwaiz1/cmp_luasnip'}, -- Optional
 			{'hrsh7th/cmp-nvim-lua'},     -- Optional
-			{'L3MON4D3/LuaSnip'},             -- Required
+			{
+				"L3MON4D3/LuaSnip",
+				-- follow latest release.
+				tag = "v2.*", -- Replace <CurrentMajor> by the latest released major (first number of latest release)
+				-- install jsregexp (optional!:).
+				run = "make install_jsregexp"
+			},
 			{'rafamadriz/friendly-snippets'}, -- Optional
 		}
+	}
+	use {
+	  'hrsh7th/vim-vsnip',
+	  requires = {
+		{'hrsh7th/vim-vsnip-integ'}
+	  }
 	}
 	use {"akinsho/toggleterm.nvim", tag = '*' }
 	use "terrortylor/nvim-comment"
 	use "CreaturePhil/vim-handmade-hero"
+	use "rafamadriz/friendly-snippets"
 	-- use({
 	--       "hrsh7th/nvim-cmp",
 	--       requires = {
@@ -75,6 +94,7 @@ require("packer").startup(function(use)
 	--         { "f3fora/cmp-spell", { "hrsh7th/cmp-calc" }, { "hrsh7th/cmp-emoji" } },
 	--       },
 	--     })
+
     use {
         'akinsho/git-conflict.nvim',
         tag = "*",
@@ -85,35 +105,36 @@ require("packer").startup(function(use)
                 disable_diagnostics = false,
                 list_opener = 'copen',
                 highlights = {
-                    incoming = 'DiffAdd',
-                    current = 'DiffText',
+                    incoming = 'MyIncoming',
+                    current = 'MyCurrent',
                 }
             }
         end
     }
-	use "lervag/vimtex"
+	--use "lervag/vimtex"
 	use "mattn/emmet-vim"
--- install without yarn or npm
+	-- install without yarn or npm
+	-- markdown preview
 	use({
 		"iamcco/markdown-preview.nvim",
 		run = function() vim.fn["mkdp#util#install"]() end,
 	})
 
-	use  
-  {
-      "zbirenbaum/copilot-cmp",
-      config = function()
-          require("copilot_cmp").setup()
-      end,
-  }
-  use "CopilotC-Nvim/CopilotChat.nvim"
-
-	use {
-	  'nvim-tree/nvim-tree.lua',
-	  requires = {
-		'nvim-tree/nvim-web-devicons', -- optional
-	  },
-	}
+	 use  
+	   {
+	       "zbirenbaum/copilot-cmp",
+	       config = function()
+	           require("copilot_cmp").setup()
+	       end,
+	   }
+	   use "CopilotC-Nvim/CopilotChat.nvim"
+	
+	 use {
+	   'nvim-tree/nvim-tree.lua',
+	   requires = {
+	 	'nvim-tree/nvim-web-devicons', -- optional
+	   },
+	 }
 
 	use {'christoomey/vim-tmux-navigator', lazy = false,}
 	use { "rcarriga/nvim-dap-ui", requires = {"mfussenegger/nvim-dap", "nvim-neotest/nvim-nio"} }
@@ -133,8 +154,379 @@ require("packer").startup(function(use)
 	-- 	"nvim-treesitter/nvim-treesitter",
 	--   },
 	-- }
+	--  Github issue
+	use {
+	  'pwntester/octo.nvim',
+	  requires = {
+		'nvim-lua/plenary.nvim',
+		'nvim-telescope/telescope.nvim',
+		-- OR 'ibhagwan/fzf-lua',
+		'nvim-tree/nvim-web-devicons',
+	  },
+	  config = function ()
+		require"octo".setup()
+	  end
+	}	
 
 end)
+---=====================================================================================================================================================================================================
+---                                                   																																			    ----
+---                                                   																																			    ----
+---                                                   								 RUSTACEANVIM																					    ----  
+---                                                   																																			    ----
+---                                                   																																			    ----
+---=====================================================================================================================================================================================================
+-- vim.g.rustaceanvim = {
+--   -- Plugin configuration
+--   tools = {
+--   },
+--   -- LSP configuration
+--   server = {
+--     on_attach = function(client, bufnr)
+--       -- you can also put keymaps in here
+--     end,
+--     default_settings = {
+--       -- rust-analyzer language server configuration
+--       ['rust-analyzer'] = {
+--       },
+--     },
+--   },
+--   -- DAP configuration
+--   dap = {
+--   },
+-- }
+---=====================================================================================================================================================================================================
+---                                                   																																			    ----
+---                                                   																																			    ----
+---                                                   								MARKDOWN PREVIEW CONFIG 																					    ----  
+---                                                   																																			    ----
+---                                                   																																			    ----
+---=====================================================================================================================================================================================================
+-- set to 1, nvim will open the preview window after entering the Markdown buffer
+-- default: 0
+vim.g.mkdp_auto_start = 0
+
+-- set to 1, nvim will auto close current preview window when changing
+-- from Markdown buffer to another buffer
+-- default: 1
+vim.g.mkdp_auto_close = 1
+
+-- set to 1, Vim will refresh Markdown when saving the buffer or
+-- when leaving insert mode. Default 0 is auto-refresh Markdown as you edit or
+-- move the cursor
+-- default: 0
+vim.g.mkdp_refresh_slow = 0
+
+-- set to 1, the MarkdownPreview command can be used for all files,
+-- by default it can be used in Markdown files only
+-- default: 0
+vim.g.mkdp_command_for_global = 0
+
+-- set to 1, the preview server is available to others in your network.
+-- By default, the server listens on localhost (127.0.0.1)
+-- default: 0
+vim.g.mkdp_open_to_the_world = 0
+
+-- use custom IP to open preview page.
+-- Useful when you work in remote Vim and preview on local browser.
+-- For more details see: https://github.com/iamcco/markdown-preview.nvim/pull/9
+-- default empty
+vim.g.mkdp_open_ip = ''
+
+-- specify browser to open preview page
+-- for path with space
+-- valid: `/path/with\ space/xxx`
+-- invalid: `/path/with\\ space/xxx`
+-- default: ''
+vim.g.mkdp_browser = ''
+
+-- set to 1, echo preview page URL in command line when opening preview page
+-- default is 0
+vim.g.mkdp_echo_preview_url = 0
+
+-- a custom Vim function name to open preview page
+-- this function will receive URL as param
+-- default is empty
+vim.g.mkdp_browserfunc = ''
+
+-- options for Markdown rendering
+-- mkit: markdown-it options for rendering
+-- katex: KaTeX options for math
+-- uml: markdown-it-plantuml options
+-- maid: mermaid options
+-- disable_sync_scroll: whether to disable sync scroll, default 0
+-- sync_scroll_type: 'middle', 'top' or 'relative', default value is 'middle'
+--   middle: means the cursor position is always at the middle of the preview page
+--   top: means the Vim top viewport always shows up at the top of the preview page
+--   relative: means the cursor position is always at relative position of the preview page
+-- hide_yaml_meta: whether to hide YAML metadata, default is 1
+-- sequence_diagrams: js-sequence-diagrams options
+-- content_editable: if enable content editable for preview page, default: v:false
+-- disable_filename: if disable filename header for preview page, default: 0
+vim.g.mkdp_preview_options = {
+    mkit = {},
+    katex = {},
+    uml = {},
+    maid = {},
+    disable_sync_scroll = 0,
+    sync_scroll_type = 'middle',
+    hide_yaml_meta = 1,
+    sequence_diagrams = {},
+    flowchart_diagrams = {},
+    content_editable = false,
+    disable_filename = 0,
+    toc = {}
+}
+
+-- use a custom Markdown style. Must be an absolute path
+-- like '/Users/username/markdown.css' or expand('~/markdown.css')
+vim.g.mkdp_markdown_css = ''
+
+-- use a custom highlight style. Must be an absolute path
+-- like '/Users/username/highlight.css' or expand('~/highlight.css')
+vim.g.mkdp_highlight_css = ''
+
+-- use a custom port to start server or empty for random
+vim.g.mkdp_port = ''
+
+-- preview page title
+-- ${name} will be replaced with the file name
+vim.g.mkdp_page_title = '?${name}?'
+
+-- use a custom location for images
+vim.g.mkdp_images_path = '/home/user/.markdown_images'
+
+-- recognized filetypes
+-- these filetypes will have MarkdownPreview... commands
+vim.g.mkdp_filetypes = {'markdown'}
+
+-- set default theme (dark or light)
+-- By default the theme is defined according to the preferences of the system
+vim.g.mkdp_theme = 'dark'
+
+-- combine preview window
+-- default: 0
+-- if enable it will reuse previous opened preview window when you preview markdown file.
+-- ensure to set vim.g.mkdp_auto_close = 0 if you have enabled this option
+vim.g.mkdp_combine_preview = 0
+
+-- auto refetch combine preview contents when change markdown buffer
+-- only when vim.g.mkdp_combine_preview is 1
+vim.g.mkdp_combine_preview_auto_refresh = 1
+
+-- Define the function to open the Markdown preview in a new Arc browser window
+function OpenMarkdownPreview(url)
+    vim.fn.system({'open', '-a', 'Arc Browser', '-n', '--args', '--new-window', url})
+end
+
+-- Set the mkdp_browserfunc to the defined function
+vim.g.mkdp_browserfunc = 'OpenMarkdownPreview'
+---=====================================================================================================================================================================================================
+---                                                   																																			    ----
+---                                                   																																			    ----
+---                                                   								 OCTO CONFIG																					    ----  
+---                                                   																																			    ----
+---                                                   																																			    ----
+---=====================================================================================================================================================================================================
+
+
+
+
+--- github issue octa 
+require"octo".setup({
+  use_local_fs = false,                    -- use local files on right side of reviews
+  enable_builtin = false,                  -- shows a list of builtin actions when no action is provided
+  default_remote = {"upstream", "origin"}; -- order to try remotes
+  default_merge_method = "commit",         -- default merge method which should be used when calling `Octo pr merge`, could be `commit`, `rebase` or `squash`
+  ssh_aliases = {},                        -- SSH aliases. e.g. `ssh_aliases = {["github.com-work"] = "github.com"}`
+  picker = "telescope",                    -- or "fzf-lua"
+  picker_config = {
+    use_emojis = false,                    -- only used by "fzf-lua" picker for now
+    mappings = {                           -- mappings for the pickers
+      open_in_browser = { lhs = "<C-b>", desc = "open issue in browser" },
+      copy_url = { lhs = "<C-y>", desc = "copy url to system clipboard" },
+      checkout_pr = { lhs = "<C-o>", desc = "checkout pull request" },
+      merge_pr = { lhs = "<C-r>", desc = "merge pull request" },
+    },
+  },
+  comment_icon = "",                      -- comment marker
+  outdated_icon = "",                    -- outdated indicator
+  resolved_icon = "",                    -- resolved indicator
+  reaction_viewer_hint_icon = "";        -- marker for user reactions
+  user_icon = "";                        -- user icon
+  timeline_marker = "";                  -- timeline marker
+  timeline_indent = "2";                   -- timeline indentation
+  right_bubble_delimiter = "";            -- bubble delimiter
+  left_bubble_delimiter = "";             -- bubble delimiter
+  github_hostname = "";                    -- GitHub Enterprise host
+  snippet_context_lines = 4;               -- number or lines around commented lines
+  gh_cmd = "gh",                           -- Command to use when calling Github CLI
+  gh_env = {},                             -- extra environment variables to pass on to GitHub CLI, can be a table or function returning a table
+  timeout = 5000,                          -- timeout for requests between the remote server
+  default_to_projects_v2 = false,          -- use projects v2 for the `Octo card ...` command by default. Both legacy and v2 commands are available under `Octo cardlegacy ...` and `Octo cardv2 ...` respectively.
+  ui = {
+    use_signcolumn = false,                -- show "modified" marks on the sign column
+    use_signstatus = true,                 -- show "modified" marks on the status column
+  },
+  issues = {
+    order_by = {                           -- criteria to sort results of `Octo issue list`
+      field = "CREATED_AT",                -- either COMMENTS, CREATED_AT or UPDATED_AT (https://docs.github.com/en/graphql/reference/enums#issueorderfield)
+      direction = "DESC"                   -- either DESC or ASC (https://docs.github.com/en/graphql/reference/enums#orderdirection)
+    }
+  },
+  pull_requests = {
+    order_by = {                           -- criteria to sort the results of `Octo pr list`
+      field = "CREATED_AT",                -- either COMMENTS, CREATED_AT or UPDATED_AT (https://docs.github.com/en/graphql/reference/enums#issueorderfield)
+      direction = "DESC"                   -- either DESC or ASC (https://docs.github.com/en/graphql/reference/enums#orderdirection)
+    },
+    always_select_remote_on_create = false -- always give prompt to select base remote repo when creating PRs
+  },
+  file_panel = {
+    size = 10,                             -- changed files panel rows
+    use_icons = true                       -- use web-devicons in file panel (if false, nvim-web-devicons does not need to be installed)
+  },
+  colors = {                               -- used for highlight groups (see Colors section below)
+    white = "#ffffff",
+    grey = "#2A354C",
+    black = "#000000",
+    red = "#fdb8c0",
+    dark_red = "#da3633",
+    green = "#acf2bd",
+    dark_green = "#238636",
+    yellow = "#d3c846",
+    dark_yellow = "#735c0f",
+    blue = "#58A6FF",
+    dark_blue = "#0366d6",
+    purple = "#6f42c1",
+  },
+  mappings_disable_default = false,        -- disable default mappings if true, but will still adapt user mappings
+  mappings = {
+    issue = {
+      close_issue = { lhs = "<space>ic", desc = "close issue" },
+      reopen_issue = { lhs = "<space>io", desc = "reopen issue" },
+      list_issues = { lhs = "<space>il", desc = "list open issues on same repo" },
+      reload = { lhs = "<C-r>", desc = "reload issue" },
+      open_in_browser = { lhs = "<C-b>", desc = "open issue in browser" },
+      copy_url = { lhs = "<C-y>", desc = "copy url to system clipboard" },
+      add_assignee = { lhs = "<space>aa", desc = "add assignee" },
+      remove_assignee = { lhs = "<space>ad", desc = "remove assignee" },
+      create_label = { lhs = "<space>lc", desc = "create label" },
+      add_label = { lhs = "<space>la", desc = "add label" },
+      remove_label = { lhs = "<space>ld", desc = "remove label" },
+      goto_issue = { lhs = "<space>gi", desc = "navigate to a local repo issue" },
+      add_comment = { lhs = "<space>ca", desc = "add comment" },
+      delete_comment = { lhs = "<space>cd", desc = "delete comment" },
+      next_comment = { lhs = "]c", desc = "go to next comment" },
+      prev_comment = { lhs = "[c", desc = "go to previous comment" },
+      react_hooray = { lhs = "<space>rp", desc = "add/remove ?? reaction" },
+      react_heart = { lhs = "<space>rh", desc = "add/remove ?? reaction" },
+      react_eyes = { lhs = "<space>re", desc = "add/remove ?? reaction" },
+      react_thumbs_up = { lhs = "<space>r+", desc = "add/remove ?? reaction" },
+      react_thumbs_down = { lhs = "<space>r-", desc = "add/remove ?? reaction" },
+      react_rocket = { lhs = "<space>rr", desc = "add/remove ?? reaction" },
+      react_laugh = { lhs = "<space>rl", desc = "add/remove ?? reaction" },
+      react_confused = { lhs = "<space>rc", desc = "add/remove ?? reaction" },
+    },
+    pull_request = {
+      checkout_pr = { lhs = "<space>po", desc = "checkout PR" },
+      merge_pr = { lhs = "<space>pm", desc = "merge commit PR" },
+      squash_and_merge_pr = { lhs = "<space>psm", desc = "squash and merge PR" },
+      rebase_and_merge_pr = { lhs = "<space>prm", desc = "rebase and merge PR" },
+      list_commits = { lhs = "<space>pc", desc = "list PR commits" },
+      list_changed_files = { lhs = "<space>pf", desc = "list PR changed files" },
+      show_pr_diff = { lhs = "<space>pd", desc = "show PR diff" },
+      add_reviewer = { lhs = "<space>va", desc = "add reviewer" },
+      remove_reviewer = { lhs = "<space>vd", desc = "remove reviewer request" },
+      close_issue = { lhs = "<space>ic", desc = "close PR" },
+      reopen_issue = { lhs = "<space>io", desc = "reopen PR" },
+      list_issues = { lhs = "<space>il", desc = "list open issues on same repo" },
+      reload = { lhs = "<C-r>", desc = "reload PR" },
+      open_in_browser = { lhs = "<C-b>", desc = "open PR in browser" },
+      copy_url = { lhs = "<C-y>", desc = "copy url to system clipboard" },
+      goto_file = { lhs = "gf", desc = "go to file" },
+      add_assignee = { lhs = "<space>aa", desc = "add assignee" },
+      remove_assignee = { lhs = "<space>ad", desc = "remove assignee" },
+      create_label = { lhs = "<space>lc", desc = "create label" },
+      add_label = { lhs = "<space>la", desc = "add label" },
+      remove_label = { lhs = "<space>ld", desc = "remove label" },
+      goto_issue = { lhs = "<space>gi", desc = "navigate to a local repo issue" },
+      add_comment = { lhs = "<space>ca", desc = "add comment" },
+      delete_comment = { lhs = "<space>cd", desc = "delete comment" },
+      next_comment = { lhs = "]c", desc = "go to next comment" },
+      prev_comment = { lhs = "[c", desc = "go to previous comment" },
+      react_hooray = { lhs = "<space>rp", desc = "add/remove ?? reaction" },
+      react_heart = { lhs = "<space>rh", desc = "add/remove ?? reaction" },
+      react_eyes = { lhs = "<space>re", desc = "add/remove ?? reaction" },
+      react_thumbs_up = { lhs = "<space>r+", desc = "add/remove ?? reaction" },
+      react_thumbs_down = { lhs = "<space>r-", desc = "add/remove ?? reaction" },
+      react_rocket = { lhs = "<space>rr", desc = "add/remove ?? reaction" },
+      react_laugh = { lhs = "<space>rl", desc = "add/remove ?? reaction" },
+      react_confused = { lhs = "<space>rc", desc = "add/remove ?? reaction" },
+      review_start = { lhs = "<space>vs", desc = "start a review for the current PR" },
+      review_resume = { lhs = "<space>vr", desc = "resume a pending review for the current PR" },
+    },
+    review_thread = {
+      goto_issue = { lhs = "<space>gi", desc = "navigate to a local repo issue" },
+      add_comment = { lhs = "<space>ca", desc = "add comment" },
+      add_suggestion = { lhs = "<space>sa", desc = "add suggestion" },
+      delete_comment = { lhs = "<space>cd", desc = "delete comment" },
+      next_comment = { lhs = "]c", desc = "go to next comment" },
+      prev_comment = { lhs = "[c", desc = "go to previous comment" },
+      select_next_entry = { lhs = "]q", desc = "move to previous changed file" },
+      select_prev_entry = { lhs = "[q", desc = "move to next changed file" },
+      select_first_entry = { lhs = "[Q", desc = "move to first changed file" },
+      select_last_entry = { lhs = "]Q", desc = "move to last changed file" },
+      close_review_tab = { lhs = "<C-c>", desc = "close review tab" },
+      react_hooray = { lhs = "<space>rp", desc = "add/remove ?? reaction" },
+      react_heart = { lhs = "<space>rh", desc = "add/remove ?? reaction" },
+      react_eyes = { lhs = "<space>re", desc = "add/remove ?? reaction" },
+      react_thumbs_up = { lhs = "<space>r+", desc = "add/remove ?? reaction" },
+      react_thumbs_down = { lhs = "<space>r-", desc = "add/remove ?? reaction" },
+      react_rocket = { lhs = "<space>rr", desc = "add/remove ?? reaction" },
+      react_laugh = { lhs = "<space>rl", desc = "add/remove ?? reaction" },
+      react_confused = { lhs = "<space>rc", desc = "add/remove ?? reaction" },
+    },
+    submit_win = {
+      approve_review = { lhs = "<C-a>", desc = "approve review" },
+      comment_review = { lhs = "<C-m>", desc = "comment review" },
+      request_changes = { lhs = "<C-r>", desc = "request changes review" },
+      close_review_tab = { lhs = "<C-c>", desc = "close review tab" },
+    },
+    review_diff = {
+      submit_review = { lhs = "<leader>vs", desc = "submit review" },
+      discard_review = { lhs = "<leader>vd", desc = "discard review" },
+      add_review_comment = { lhs = "<space>ca", desc = "add a new review comment" },
+      add_review_suggestion = { lhs = "<space>sa", desc = "add a new review suggestion" },
+      focus_files = { lhs = "<leader>e", desc = "move focus to changed file panel" },
+      toggle_files = { lhs = "<leader>b", desc = "hide/show changed files panel" },
+      next_thread = { lhs = "]t", desc = "move to next thread" },
+      prev_thread = { lhs = "[t", desc = "move to previous thread" },
+      select_next_entry = { lhs = "]q", desc = "move to previous changed file" },
+      select_prev_entry = { lhs = "[q", desc = "move to next changed file" },
+      select_first_entry = { lhs = "[Q", desc = "move to first changed file" },
+      select_last_entry = { lhs = "]Q", desc = "move to last changed file" },
+      close_review_tab = { lhs = "<C-c>", desc = "close review tab" },
+      toggle_viewed = { lhs = "<leader><space>", desc = "toggle viewer viewed state" },
+      goto_file = { lhs = "gf", desc = "go to file" },
+    },
+    file_panel = {
+      submit_review = { lhs = "<leader>vs", desc = "submit review" },
+      discard_review = { lhs = "<leader>vd", desc = "discard review" },
+      next_entry = { lhs = "j", desc = "move to next changed file" },
+      prev_entry = { lhs = "k", desc = "move to previous changed file" },
+      select_entry = { lhs = "<cr>", desc = "show selected changed file diffs" },
+      refresh_files = { lhs = "R", desc = "refresh changed files panel" },
+      focus_files = { lhs = "<leader>e", desc = "move focus to changed file panel" },
+      toggle_files = { lhs = "<leader>b", desc = "hide/show changed files panel" },
+      select_next_entry = { lhs = "]q", desc = "move to previous changed file" },
+      select_prev_entry = { lhs = "[q", desc = "move to next changed file" },
+      select_first_entry = { lhs = "[Q", desc = "move to first changed file" },
+      select_last_entry = { lhs = "]Q", desc = "move to last changed file" },
+      close_review_tab = { lhs = "<C-c>", desc = "close review tab" },
+      toggle_viewed = { lhs = "<leader><space>", desc = "toggle viewer viewed state" },
+    },
+  },
+})
 ---- Gopher -----
 -- require("gopher").setup {
 --   commands = {
@@ -648,9 +1040,9 @@ vim.keymap.set('n', '<leader>f', function()
 end, { desc = '[/] Fuzzily search in current buffer' })
 
 vim.keymap.set('i', '<M-m>', 'copilot#Accept("\\<CR>")', {
-  expr = true,
-  replace_keycodes = false
-})
+   expr = true,
+   replace_keycodes = false
+ })
 vim.g.copilot_no_tab_map = true
 vim.keymap.set('n', '<leader>p', require('telescope.builtin').find_files, { desc = '[S]earch [F]iles' })
 vim.keymap.set('n', '<M-p>', require('telescope.builtin').find_files, { desc = '[S]earch [F]iles' })
@@ -687,32 +1079,43 @@ require("lualine").setup{
 
 -- LSP
 local lsp = require("lsp-zero")
+lsp.on_attach(function(client, bufnr)
+  lsp_zero.default_keymaps({buffer = bufnr})
+end)
+
+lsp.set_sign_icons({
+  error = '✘',
+  warn = '▲',
+  hint = '⚑',
+  info = '»'
+})
+
+lsp.on_attach(function(client, bufnr)
+  lsp_zero.default_keymaps({buffer = bufnr})
+end)
+
+vim.diagnostic.config({
+  signs = false
+})
 
 lsp.preset("recommended")
--- lsp.ensure_installed({
--- 	"gopls",
--- 	"eslint",
--- 	"rust_analyzer",
--- 	"html",
--- 	"cssls",
--- 	"pylsp",
--- 	"emmet_language_server"
--- })
 
 
 lsp.setup_servers({
 	"gopls",
 	"eslint",
---	"rust_analyzer",
+	"rust_analyzer",
+	"move_analyzer",
 --  "tsserver",
 --  "html",
 --  "cssls",
 	"pylsp",
+	"pylyzer",
 	"emmet_language_server",
 	"eslint",
-	--"solidity",
-	"pylsp",
---	"solidity_ls_nomicfoundation",
+	"solidity",
+	"solidity_ls_nomicfoundation",
+    "solidity_ls",
 })
 
 lsp.set_preferences({
@@ -748,43 +1151,43 @@ nvim_lsp.eslint.setup({
   },
 }) 
 ------- solidity  
--- nvim_lsp.solidity.setup({
---   -- on_attach = on_attach, -- probably you will need this.
---   -- capabilities = capabilities,
---   settings = {
---     -- example of global remapping
---     solidity = {
---         includePath = '',
---         remapping = { ["@OpenZeppelin/"] = 'OpenZeppelin/openzeppelin-contracts@4.6.0/' },
---         -- Array of paths to pass as --allow-paths to solc
---         allowPaths = {}
---     }
---   },
--- })
+nvim_lsp.solidity.setup({
+  -- on_attach = on_attach, -- probably you will need this.
+  -- capabilities = capabilities,
+  settings = {
+    -- example of global remapping
+    solidity = {
+        includePath = '',
+        remapping = { ["@OpenZeppelin/"] = 'OpenZeppelin/openzeppelin-contracts@4.6.0/' },
+        -- Array of paths to pass as --allow-paths to solc
+        allowPaths = {}
+    }
+  },
+})
 
 
 ----- rust
-nvim_lsp.rust_analyzer.setup({
-    on_attach=on_attach,
-    settings = {
-        ["rust-analyzer"] = {
-            imports = {
-                granularity = {
-                    group = "module",
-                },
-                prefix = "self",
-            },
-            cargo = {
-                buildScripts = {
-                    enable = true,
-                },
-            },
-            procMacro = {
-                enable = true
-            },
-        }
-    }
-})
+-- nvim_lsp.rust_analyzer.setup({
+--     on_attach=on_attach,
+--     settings = {
+--         ["rust-analyzer"] = {
+--             imports = {
+--                 granularity = {
+--                     group = "module",
+--                 },
+--                 prefix = "self",
+--             },
+--             cargo = {
+--                 buildScripts = {
+--                     enable = true,
+--                 },
+--             },
+--             procMacro = {
+--                 enable = true
+--             },
+--         }
+--     }
+-- })
 --------------
 
 local augroup = vim.api.nvim_create_augroup('LspFormatting', {})
@@ -1006,7 +1409,7 @@ rt.setup({
     end,
   },
 })
-
+--
 -- vim.g.rustaceanvim = {
 --    ---@type RustaceanToolsOpts
 --    tools = {
@@ -1106,7 +1509,8 @@ cmp.setup({
   -- Enable LSP snippets
   snippet = {
     expand = function(args)
-        vim.fn["vsnip#anonymous"](args.body)
+ ---       vim.fn["vsnip#anonymous"](args.body)
+ 	require('luasnip').lsp_expand(args.body)
     end,
   },
   mapping = {
@@ -1175,19 +1579,55 @@ set signcolumn=yes
 autocmd CursorHold * lua vim.diagnostic.open_float(nil, { focusable = false })
 ]])
 
-vim.api.nvim_set_keymap('n', '<c-]>', '<cmd>lua vim.lsp.buf.definition()<CR>', {silent = true})
-vim.api.nvim_set_keymap('n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', {silent = true})
-vim.api.nvim_set_keymap('n', 'gD', '<cmd>lua vim.lsp.buf.implementation()<CR>', {silent = true})
-vim.api.nvim_set_keymap('n', '<c-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', {silent = true})
-vim.api.nvim_set_keymap('n', '1gD', '<cmd>lua vim.lsp.buf.type_definition()<CR>', {silent = true})
-vim.api.nvim_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', {silent = true})
-vim.api.nvim_set_keymap('n', 'g0', '<cmd>lua vim.lsp.buf.document_symbol()<CR>', {silent = true}) 
-vim.api.nvim_set_keymap('n', 'gW', '<cmd>lua vim.lsp.buf.workspace_symbol()<CR>', {silent = true})
-vim.api.nvim_set_keymap('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', {silent = true})
+-- vim.api.nvim_set_keymap('n', '<c-]>', '<cmd>lua vim.lsp.buf.definition()<CR>', {silent = true})
+-- vim.api.nvim_set_keymap('n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', {silent = true})
+-- vim.api.nvim_set_keymap('n', 'gD', '<cmd>lua vim.lsp.buf.implementation()<CR>', {silent = true})
+-- vim.api.nvim_set_keymap('n', '<c-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', {silent = true})
+-- vim.api.nvim_set_keymap('n', '1gD', '<cmd>lua vim.lsp.buf.type_definition()<CR>', {silent = true})
+-- vim.api.nvim_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', {silent = true})
+-- vim.api.nvim_set_keymap('n', 'g0', '<cmd>lua vim.lsp.buf.document_symbol()<CR>', {silent = true}) 
+-- vim.api.nvim_set_keymap('n', 'gW', '<cmd>lua vim.lsp.buf.workspace_symbol()<CR>', {silent = true})
+-- vim.api.nvim_set_keymap('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', {silent = true})
+
+vim.api.nvim_create_autocmd('LspAttach', {
+  desc = 'LSP actions',
+  callback = function(event)
+    local opts = {buffer = event.buf}
+
+    vim.keymap.set('n', 'K', '<cmd>lua vim.lsp.buf.hover()<cr>', opts)
+    vim.keymap.set('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<cr>', opts)
+    vim.keymap.set('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<cr>', opts)
+    vim.keymap.set('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<cr>', opts)
+    vim.keymap.set('n', 'go', '<cmd>lua vim.lsp.buf.type_definition()<cr>', opts)
+    vim.keymap.set('n', 'gr', '<cmd>lua vim.lsp.buf.references()<cr>', opts)
+    vim.keymap.set('n', 'gs', '<cmd>lua vim.lsp.buf.signature_help()<cr>', opts)
+    vim.keymap.set('n', '<F2>', '<cmd>lua vim.lsp.buf.rename()<cr>', opts)
+    vim.keymap.set({'n', 'x'}, '<F3>', '<cmd>lua vim.lsp.buf.format({async = true})<cr>', opts)
+    vim.keymap.set('n', '<F4>', '<cmd>lua vim.lsp.buf.code_action()<cr>', opts)
+
+    vim.keymap.set('n', 'gl', '<cmd>lua vim.diagnostic.open_float()<cr>', opts)
+    vim.keymap.set('n', '[d', '<cmd>lua vim.diagnostic.goto_prev()<cr>', opts)
+    vim.keymap.set('n', ']d', '<cmd>lua vim.diagnostic.goto_next()<cr>', opts) 
+  end
+})
+
+
+local lsp_capabilities = require('cmp_nvim_lsp').default_capabilities()
+require("luasnip.loaders.from_vscode").load({ include = { "go" } })
+
+vim.g.completion_enable_snippet = 'vim-vsnip'
+
+
+-- require('lspconfig').tsserver.setup({capabilities = lsp_capabilities})
+-- require('lspconfig').rust_analyzer.setup({capabilities = lsp_capabilities})
+
+-- in this snippet there isn't any autocompletion setup
 
 config = function()
     require"surround".setup {mappings_style = "sandwich"}
 end
+
+
 
 require"surround".setup {
   context_offset = 100,

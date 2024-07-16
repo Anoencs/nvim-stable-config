@@ -136,7 +136,7 @@ _G.packer_plugins = {
     url = "https://github.com/rafamadriz/friendly-snippets"
   },
   ["git-conflict.nvim"] = {
-    config = { "\27LJ\2\n–\1\0\0\4\0\6\0\t6\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\3\0005\3\4\0=\3\5\2B\0\2\1K\0\1\0\15highlights\1\0\2\rincoming\fDiffAdd\fcurrent\rDiffText\1\0\5\16list_opener\ncopen\24disable_diagnostics\1\21default_commands\2\21default_mappings\2\15highlights\0\nsetup\17git-conflict\frequire\0" },
+    config = { "\27LJ\2\n‘\1\0\0\4\0\6\0\t6\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\3\0005\3\4\0=\3\5\2B\0\2\1K\0\1\0\15highlights\1\0\2\rincoming\15MyIncoming\fcurrent\14MyCurrent\1\0\5\24disable_diagnostics\1\21default_commands\2\21default_mappings\2\15highlights\0\16list_opener\ncopen\nsetup\17git-conflict\frequire\0" },
     loaded = true,
     path = "/Users/eudaimonia/.local/share/nvim/site/pack/packer/start/git-conflict.nvim",
     url = "https://github.com/akinsho/git-conflict.nvim"
@@ -180,6 +180,11 @@ _G.packer_plugins = {
     loaded = true,
     path = "/Users/eudaimonia/.local/share/nvim/site/pack/packer/start/mason.nvim",
     url = "https://github.com/williamboman/mason.nvim"
+  },
+  ["move.vim"] = {
+    loaded = true,
+    path = "/Users/eudaimonia/.local/share/nvim/site/pack/packer/start/move.vim",
+    url = "https://github.com/modocache/move.vim"
   },
   ["nvim-cmp"] = {
     loaded = true,
@@ -226,6 +231,12 @@ _G.packer_plugins = {
     needs_bufread = false,
     path = "/Users/eudaimonia/.local/share/nvim/site/pack/packer/opt/nvim-web-devicons",
     url = "https://github.com/kyazdani42/nvim-web-devicons"
+  },
+  ["octo.nvim"] = {
+    config = { "\27LJ\2\n2\0\0\3\0\3\0\0066\0\0\0'\2\1\0B\0\2\0029\0\2\0B\0\1\1K\0\1\0\nsetup\tocto\frequire\0" },
+    loaded = true,
+    path = "/Users/eudaimonia/.local/share/nvim/site/pack/packer/start/octo.nvim",
+    url = "https://github.com/pwntester/octo.nvim"
   },
   ["packer.nvim"] = {
     loaded = true,
@@ -277,22 +288,26 @@ _G.packer_plugins = {
     path = "/Users/eudaimonia/.local/share/nvim/site/pack/packer/start/vim-vsnip",
     url = "https://github.com/hrsh7th/vim-vsnip"
   },
-  vimtex = {
+  ["vim-vsnip-integ"] = {
     loaded = true,
-    path = "/Users/eudaimonia/.local/share/nvim/site/pack/packer/start/vimtex",
-    url = "https://github.com/lervag/vimtex"
+    path = "/Users/eudaimonia/.local/share/nvim/site/pack/packer/start/vim-vsnip-integ",
+    url = "https://github.com/hrsh7th/vim-vsnip-integ"
   }
 }
 
 time([[Defining packer_plugins]], false)
+-- Config for: git-conflict.nvim
+time([[Config for git-conflict.nvim]], true)
+try_loadstring("\27LJ\2\n‘\1\0\0\4\0\6\0\t6\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\3\0005\3\4\0=\3\5\2B\0\2\1K\0\1\0\15highlights\1\0\2\rincoming\15MyIncoming\fcurrent\14MyCurrent\1\0\5\24disable_diagnostics\1\21default_commands\2\21default_mappings\2\15highlights\0\16list_opener\ncopen\nsetup\17git-conflict\frequire\0", "config", "git-conflict.nvim")
+time([[Config for git-conflict.nvim]], false)
+-- Config for: octo.nvim
+time([[Config for octo.nvim]], true)
+try_loadstring("\27LJ\2\n2\0\0\3\0\3\0\0066\0\0\0'\2\1\0B\0\2\0029\0\2\0B\0\1\1K\0\1\0\nsetup\tocto\frequire\0", "config", "octo.nvim")
+time([[Config for octo.nvim]], false)
 -- Config for: copilot-cmp
 time([[Config for copilot-cmp]], true)
 try_loadstring("\27LJ\2\n9\0\0\3\0\3\0\0066\0\0\0'\2\1\0B\0\2\0029\0\2\0B\0\1\1K\0\1\0\nsetup\16copilot_cmp\frequire\0", "config", "copilot-cmp")
 time([[Config for copilot-cmp]], false)
--- Config for: git-conflict.nvim
-time([[Config for git-conflict.nvim]], true)
-try_loadstring("\27LJ\2\n–\1\0\0\4\0\6\0\t6\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\3\0005\3\4\0=\3\5\2B\0\2\1K\0\1\0\15highlights\1\0\2\rincoming\fDiffAdd\fcurrent\rDiffText\1\0\5\16list_opener\ncopen\24disable_diagnostics\1\21default_commands\2\21default_mappings\2\15highlights\0\nsetup\17git-conflict\frequire\0", "config", "git-conflict.nvim")
-time([[Config for git-conflict.nvim]], false)
 
 _G._packer.inside_compile = false
 if _G._packer.needs_bufread == true then
